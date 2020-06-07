@@ -25,51 +25,58 @@ def load_nicknames_data():#nicknameを返す
 def load_links_data():
 
     path = "./sns/links.txt"
-    links = []
+    links_table = []
 
     links_data = open(path, "r")
 
     # 行ごとにすべて読み込んでリストデータにする
     all_lines = links_data.readlines()
 
+    table_append_index = -1
     for line in all_lines: 
         line = line.replace('\n','') #改行文字削除
         from_id, to_id = map(lambda x:int(x), line.split('\t')) #from_idとto_idで分ける（どちらもint型）
-        links.append([from_id, to_id])
+        
+        if from_id == table_append_index:
+            links_table[from_id].append(to_id)
+            # insert_sort(links_table[from_id], to_id)
+
+        # elif table_append_index == -1: #[[to_id]]の形を作る
+        #     table_append_index += 1
+        #     links_table.append([to_id])
+
+
+        else:
+            if table_append_index > 0:
+                links_table[table_append_index].sort()
+
+            while(len(links_table) < from_id):
+                links_table.append([])
+                table_append_index += 1
+
+            links_table.append([to_id])
+            table_append_index += 1
 
     # ファイルをクローズする
     links_data.close()
 
-    return links
-
-def make_link_data(links):
-    people_number = links[-1][0] + 1
-    link_table = [[] for _ in range(people_number)]
-
-    links_index = 0
-
-    for i in range(people_number):
-        
-        while (links_index < len(links)) and (links[links_index][0] == i):
-            link_table[i].append(links[links_index][1])
-            links_index += 1
-    
-
-    return link_table
+    return links_table
 
 
-def check_person(from_person, to_person):
-    pass
+
+
+def check_person(from_person, to_person, links_table):
+    connected_people = links_table[from_person]
+
+
 
 
 
 
 nicknames  =  load_nicknames_data()
-links = load_links_data() 
-link_table = make_link_data(links) #人数分の配列の中につながっている人のindexが入っている
+links_table = load_links_data() #人数分の配列の中につながっている人のindexが入っている
 
-
-# print(link_table)
+print(links_table)
 # print(links)
 # print(nicknames[1])
 # check_person(from_person, to_person)
