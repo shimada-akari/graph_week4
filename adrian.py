@@ -69,32 +69,53 @@ def load_links_data():
 
     return links_table
 
+def print_route(color_list, from_id, to_id, route_list):
+    color = color_list[from_id]
+    i = 0
 
+    while route_list[color][i] != from_id and route_list[color][i] != to_id:
+        i += 1
 
+    # print("f", end = " ")
+    print(route_list[color][i], end = " ")
+    i += 1
 
-def check_person(from_id, to_id, links_table, color_list):
+    while route_list[color][i] != from_id and route_list[color][i] != to_id:
+        # print("m", end = " ")
+        print(route_list[color][i], end = " ")
+        i += 1
+
+    # print("l", end = " ")
+    print(route_list[color][i])
+
+def check_person(from_id, to_id, links_table, color_list, route_list):
     connected_people = links_table[from_id]
 
-    # index = bisect.bisect_left(connected_people, to_id) #to_id index以下の要素のうち、最も大きい要素のindexが返ってくる
-    
-    # if index < len(connected_people) and connected_people[index] == to_id:
-    #     print("yes")
-    # else:
-    #     print("no")
     if color_list[from_id] == color_list[to_id]:
-        print("yes")
+        print("yes", end = " ")
+        print_route(color_list, from_id, to_id, route_list)
+        
     else:
         print("no")
 
 def search_id(nickname, id_nicknames):
     index = bisect.bisect_left(id_nicknames, nickname)
-    return index
+    if id_nicknames[index] == nickname:
+        return index
+    else:
+        print("There is no people whose name is {}.".format(nickname))
+        exit()
 
-def search_connection(id, links_table, color_list, color_value):
+def search_connection(id, links_table, color_list, color_value, route_list):
     stack = []
     stack.append(id)
 
     color_list[id] = color_value
+
+    route_list_index = len(route_list) #route_listにidをいれるindexはroute_listの長さの番号。また、color_valueの値はroute_listのindexになっている
+    route_list.append([id])
+    
+
 
     # count = 0 #for check
     while (len(stack) != 0):
@@ -106,39 +127,73 @@ def search_connection(id, links_table, color_list, color_value):
                 # print(linked_person)
                 color_list[person] = color_value
                 stack.append(person)
+                route_list[route_list_index].append(person)
 
         # count += 1
         # if count >= 10:
         #     break
 
-    return color_list
+    return color_list, route_list
 
-def assign_color():
-    color_list = [-1]* len(links_table)
-    color_value = 1
-    for id in range(len(links_table)):
+def assign_color(links_table, people_number):
+    route_list = []
+    color_list = [-1]* people_number
+    color_value = 0
+    for id in range(people_number):
         if(color_list[id] == -1): #まだ訪問していない
-            color_list = search_connection(id, links_table, color_list, color_value)
+            color_list, route_list = search_connection(id, links_table, color_list, color_value, route_list)
             color_value += 1
-    return color_list
+    return color_list, route_list
 
-
-id_nicknames  =  load_nicknames_data() #id_nicknames : idのindexにnicknameが入っている, nicknamesのabc順
-links_table = load_links_data() #人数分の配列の中につながっている人のindexが入っている
-
-color_list = assign_color()
-
-
-while(True):
-    from_nickname, to_nickname = map(lambda x:x, input("from -> to : ").split())
+def run_test():
+    id_nicknames = ["aaron", "adrian", "alan", "alex"]
+    links_table = [[1], [], [0, 3], [1, 2]]
+    people_number = len(id_nicknames)
     
-    from_id = search_id(from_nickname, id_nicknames)
-    to_id = search_id(to_nickname, id_nicknames)
+    color_list, route_list = assign_color(links_table, people_number)
+    print(color_list)
 
-    # print(from_id, to_id)
-    check_person(from_id, to_id, links_table, color_list)
+    check_person(0, 1, links_table, color_list, route_list) #yes 0,1
+    check_person(0, 2, links_table, color_list, route_list) #no
+    check_person(0, 3, links_table, color_list, route_list) #no
 
-# print(links_table)
-# print(links)
-# print(nicknames[1])
-# check_person(from_id, to_id)
+    check_person(1, 0, links_table, color_list, route_list) #no
+    check_person(1, 2, links_table, color_list, route_list) #no
+    check_person(1, 3, links_table, color_list, route_list) #no
+
+    check_person(2, 0, links_table, color_list, route_list) #yes 2, 0
+    check_person(2, 1, links_table, color_list, route_list) #yes 2, 3, 1
+    check_person(2, 3, links_table, color_list, route_list) #yes 2, 3
+
+    check_person(3, 0, links_table, color_list, route_list) #yes 3, 2, 0
+    check_person(3, 1, links_table, color_list, route_list) #yes 3, 1
+    check_person(3, 2, links_table, color_list, route_list) #yes 3, 2
+
+def main():
+
+    id_nicknames  =  load_nicknames_data() #id_nicknames : idのindexにnicknameが入っている, nicknamesのabc順
+    links_table = load_links_data() #人数分の配列の中につながっている人のindexが入っている
+
+    people_number = len(id_nicknames)
+    color_list, route_list = assign_color(links_table, people_number)
+
+
+
+    while(True):
+        from_nickname, to_nickname = map(lambda x:x, input("from -> to : ").split())
+        
+        from_id = search_id(from_nickname, id_nicknames)
+        to_id = search_id(to_nickname, id_nicknames)
+
+        # print(from_id, to_id)
+        check_person(from_id, to_id, links_table, color_list, route_list)
+
+    # print(links_table)
+    # print(links)
+    # print(nicknames[1])
+    # check_person(from_id, to_id)
+
+
+if __name__ == "__main__":
+    run_test() #テスト実行
+    main()
