@@ -118,8 +118,6 @@ def check_link(from_id, links_table, id_nicknames):
 
     return search_connection(from_id, links_table, people_number)
 
-    
-
 
 
 def run_test():
@@ -201,8 +199,9 @@ def main():
         non_connected = check_link(from_id, links_table, id_nicknames)
 
         if len(non_connected) != 0:
-            
-            print(" ".join(map(lambda x:str(x), non_connected)))
+            for i in non_connected:
+                print(id_nicknames[i], "(", i, ")   ",end = " ")
+            print("")
         else:
             print("All connected.")
 

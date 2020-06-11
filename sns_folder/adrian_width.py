@@ -116,10 +116,13 @@ def check_link(from_id, to_id, links_table, id_nicknames):
     if flag == "yes":
         print(flag) 
         print(nodes_counter[to_id])
-        print(route_list[to_id])
-        
+
+        for i in route_list[to_id]:
+            print(i,id_nicknames[i], end = ", ")
+        print("\n")
     else:
-        print(flag)
+        print(flag, "\n")
+    
         return
 
 
@@ -176,7 +179,7 @@ def main():
     id_nicknames  =  load_nicknames_data() #id_nicknames : idのindexにnicknameが入っている, nicknamesのabc順
     links_table = load_links_data() #人数分の配列の中につながっている人のindexが入っている
 
-    print(links_table)
+    # print(links_table)
     people_number = len(id_nicknames)
 
     while(True):
