@@ -1,6 +1,4 @@
 #幅優先探索
-#adrianからbruceへは最小で3人を介せば到達できます。
-
 
 import bisect 
 
@@ -16,12 +14,9 @@ def load_nicknames_data():#nicknameを返す
     for line in all_lines: 
         line = line.replace('\n','') #改行文字削除
         id, next_id_name = line.split('\t') #idとnicknameで分ける
-        # id = int(id)
-        # nicknames.append([id, next_id_name])
         nicknames.append(next_id_name)
 
-    # ファイルをクローズする
-    nicknames_data.close()
+    nicknames_data.close() # ファイルをクローズする
 
     return nicknames
 
@@ -50,7 +45,6 @@ def load_links_data():
             links_table[from_id] = sort(links_table[from_id], to_id)
 
         else:
-
             while(len(links_table) < from_id): #誰もフォローしていない人がいた場合、その人用の空リストを追加する
                 links_table.append([])
                 table_append_index += 1
@@ -118,8 +112,6 @@ def check_link(from_id, to_id, links_table, id_nicknames):
         print("\n")
     else:
         print(flag, "\n")
-    
-        return
 
 
 
@@ -175,7 +167,6 @@ def main():
     id_nicknames  =  load_nicknames_data() #id_nicknames : idのindexにnicknameが入っている, nicknamesのabc順
     links_table = load_links_data() #人数分の配列の中につながっている人のindexが入っている
 
-    # print(links_table)
     people_number = len(id_nicknames)
 
     while(True):
@@ -184,7 +175,6 @@ def main():
         from_id = search_id(from_nickname, id_nicknames)
         to_id = search_id(to_nickname, id_nicknames)
 
-        # print(from_id, to_id)
         check_link(from_id, to_id, links_table, id_nicknames)
 
 if __name__ == "__main__":

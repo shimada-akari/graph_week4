@@ -16,12 +16,10 @@ def load_nicknames_data():#nicknameを返す
     for line in all_lines: 
         line = line.replace('\n','') #改行文字削除
         id, next_id_name = line.split('\t') #idとnicknameで分ける
-        # id = int(id)
-        # nicknames.append([id, next_id_name])
         nicknames.append(next_id_name)
 
-    # ファイルをクローズする
-    nicknames_data.close()
+    
+    nicknames_data.close() # ファイルをクローズする
 
     return nicknames
 
@@ -62,8 +60,8 @@ def load_links_data():
             links_table.append([to_id])
             table_append_index += 1
 
-    # ファイルをクローズする
-    links_data.close()
+    
+    links_data.close() # ファイルをクローズする
 
     return links_table
 
@@ -71,10 +69,10 @@ def load_links_data():
 def search_id(nickname, id_nicknames):
     index = bisect.bisect_left(id_nicknames, nickname)
 
-    if index < len(id_nicknames) and id_nicknames[index] == nickname:
+    if index < len(id_nicknames) and id_nicknames[index] == nickname: #indexがid_nicknamesの範囲内かつnicknameが存在する
         return index
     else:
-        print("There is no people whose name is {}.".format(nickname))
+        print("There is no people whose name is {}.".format(nickname)) 
         return None
 
 def search_connection(from_id, links_table, people_number):
@@ -97,11 +95,9 @@ def search_connection(from_id, links_table, people_number):
                 nodes_counter[neighbor] = nodes_counter[next_id] + 1
         
                 route_list[neighbor] = route_list[next_id].copy() #静的確保
-                # print("before", route_list[next_id], route_list[neighbor])
                 route_list[neighbor].append(neighbor)
-                # print(route_list, next_id, neighbor)
+                
 
-        
     not_connected = []
     for i in range(people_number):
         if visited_list[i] == 0: #未訪問ノード
@@ -115,6 +111,15 @@ def check_link(from_id, links_table, id_nicknames):
     people_number = len(id_nicknames)
 
     return search_connection(from_id, links_table, people_number)
+
+def print_result(non_connected, id_nicknames):
+    if len(non_connected) != 0:
+        for i in non_connected:
+            print(id_nicknames[i], "(", i, ")   ",end = " ")
+        print("")
+    else:
+        print("All connected.")
+
 
 
 def run_test():
@@ -190,17 +195,12 @@ def main():
         
         from_id = search_id(from_nickname, id_nicknames)
 
-        if from_id == None:
+        if from_id == None: #入力不正
             continue
        
         non_connected = check_link(from_id, links_table, id_nicknames)
 
-        if len(non_connected) != 0:
-            for i in non_connected:
-                print(id_nicknames[i], "(", i, ")   ",end = " ")
-            print("")
-        else:
-            print("All connected.")
+        print_result(non_connected, id_nicknames)
 
 if __name__ == "__main__":
     run_test()

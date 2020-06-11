@@ -56,9 +56,8 @@ def load_links_data():
 
             links_table.append([to_id])
             table_append_index += 1
-
-    # ファイルをクローズする
-    links_data.close()
+    
+    links_data.close() # ファイルをクローズする
 
     return links_table
 
@@ -79,14 +78,15 @@ def search_connection(from_id, to_id, links_table, people_number):
 
     stack.append(from_id)
 
-    while (len(stack) != 0):
+    while (len(stack) != 0): #stackに何も無くなったら探索終了　to_idは無し
+        
         next_id = stack.pop(-1)
 
         if next_id == to_id:
-            return "yes"
+            return "yes" #探索終了
          
         elif visited_list[next_id] == -1:
-            visited_list[next_id] += 1
+            visited_list[next_id] += 1 
             
             for neighbor in links_table[next_id]:
                 stack.append(neighbor)
@@ -94,17 +94,13 @@ def search_connection(from_id, to_id, links_table, people_number):
     return "no"
 
 
-def check_link(from_id, to_id, links_table, id_nicknames):
+def check_link(from_id, to_id, links_table, id_nicknames): 
     people_number = len(id_nicknames)
 
     flag = search_connection(from_id, to_id, links_table, people_number)
 
-    if flag:
-        print(flag) 
+    print(flag) 
         
-    else:
-        return
-
 
 def run_test():
 
