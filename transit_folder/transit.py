@@ -29,7 +29,6 @@ def search_id(station_id_dic, station):
         return None
 
 
-
 def add_linked_id(from_id, to_id, min, edges_list):
     # print(from_id, to_id, min)
     if edges_list[from_id] == None: #edges_listにto_idを追加するのが初めての駅
@@ -38,8 +37,6 @@ def add_linked_id(from_id, to_id, min, edges_list):
         edges_list[from_id].append([to_id, min])   
 
     return edges_list
-
-
 
 
 def load_edges(path, STATIONS_NUMBER): #path = "./transit/edges.txt"
@@ -57,8 +54,7 @@ def load_edges(path, STATIONS_NUMBER): #path = "./transit/edges.txt"
         from_id, to_id, min= map(lambda x:int(x), line.split("\t")) 
 
         edges_list = add_linked_id(from_id, to_id, min, edges_list)
-        edges_list = add_linked_id(to_id, from_id, min, edges_list)
-        
+        edges_list = add_linked_id(to_id, from_id, min, edges_list)    
     
     return edges_list
 
@@ -85,45 +81,11 @@ def culculate_minites(min_node, edges_list, min_minutes, color_list, parents):
 
     return min_minutes, color_list
         
-
-
-def dijkstra(edges_list, id_station_list, from_id, to_id):
-
-
-    min_minutes = [INF]*STATIONS_NUMBER
-    parents = [-1]*STATIONS_NUMBER
-    color_list = [UNDO]*STATIONS_NUMBER
-
-    min_minutes[from_id] = 0
-    
-    while(True):
-        # print("min_minutes ", min_minutes) #for check
-        # print("color ", color_list)
-        # print("parents ", parents)
-
-        min_node = find_min_node(min_minutes, color_list) #探索完了ノード以外のノードの中で、min_minutesの値が最も小さいノードを見つける
-        # print(min_node) #for check
-
-        if (min_node == -1) or (min_node == to_id): #全部　探索済み or to_nodeに行き着いた
-            break
-        
-        color_list[min_node] = DONE
-        min_minutes, color_list = culculate_minites(min_node, edges_list, min_minutes, color_list, parents) #min_nodeに隣接するノードについて最小値を計算
-
-
-    next_id = to_id #routeを遡る
-    stack = []
-    stack.append(next_id)
-
-    while(next_id != from_id):
-        stack.append(parents[next_id])
-        next_id = parents[next_id]
-
-    
-    print("minimum time : ", min_minutes[to_id])
-    print("route : ", end = "")
-    
+def print_and_make_route(stack, id_station_list): #ルートの表示とルートリストの作成(assert用)
     route = []
+
+    print("route : ", end = "")
+
     while(stack):
         id = stack.pop(-1)
         route.append(id)
@@ -132,8 +94,45 @@ def dijkstra(edges_list, id_station_list, from_id, to_id):
         
     print("")
 
-    return min_minutes[to_id], route
+    return route
+    
+def make_stack(from_id, to_id, parents): #routeのstackを作る
+    next_id = to_id #routeを遡る
+    stack = []
+    stack.append(next_id)
 
+    while(next_id != from_id):
+        stack.append(parents[next_id])
+        next_id = parents[next_id]
+
+    return stack
+
+def dijkstra(edges_list, id_station_list, from_id, to_id):
+
+    min_minutes = [INF]*STATIONS_NUMBER
+    parents = [-1]*STATIONS_NUMBER
+    color_list = [UNDO]*STATIONS_NUMBER
+
+    min_minutes[from_id] = 0
+    
+    while(True):
+
+        min_node = find_min_node(min_minutes, color_list) #探索完了ノード以外のノードの中で、min_minutesの値が最も小さいノードを見つける
+
+        if (min_node == -1) or (min_node == to_id): #全部　探索済み or to_nodeに行き着いた
+            break
+        
+        color_list[min_node] = DONE
+        min_minutes, color_list = culculate_minites(min_node, edges_list, min_minutes, color_list, parents) #min_nodeに隣接するノードについて最小値を計算
+
+
+    stack = make_stack(from_id, to_id, parents)
+
+    print("minimum time : ", min_minutes[to_id])
+    
+    route = print_and_make_route(stack, id_station_list)
+
+    return min_minutes[to_id], route
 
 
 def test(actual_min, actual_stack, edges_list, id_station_list, from_id, to_id):
@@ -141,7 +140,6 @@ def test(actual_min, actual_stack, edges_list, id_station_list, from_id, to_id):
     result_min, result_stack = dijkstra(edges_list, id_station_list, from_id, to_id)
     assert(result_min == actual_min)
     assert(actual_stack == result_stack)
-
 
 
 def run_test():
@@ -203,7 +201,7 @@ def main():
         from_id = search_id(station_id_dic, from_station)
         to_id = search_id(station_id_dic, to_station)
 
-        if from_id == None or to_id == None:
+        if from_id == None or to_id == None: #入力不正
             continue
 
         dijkstra(edges_list, id_station_list, from_id, to_id)
