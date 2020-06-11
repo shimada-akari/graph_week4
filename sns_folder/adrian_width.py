@@ -90,18 +90,14 @@ def search_connection(from_id, to_id, links_table, people_number):
 
         elif visited_list[next_id] == -1: #queueから取り出した要素が未訪問
             visited_list[next_id] += 1
-            
 
             for neighbor in links_table[next_id]:
                 queue.append(neighbor)
                 nodes_counter[neighbor] = nodes_counter[next_id] + 1
          
                 route_list[neighbor] = route_list[next_id].copy() #静的確保
-                # print("before", route_list[next_id], route_list[neighbor])
-                route_list[neighbor].append(neighbor)
-                # print(route_list, next_id, neighbor)
-
-                
+              
+                route_list[neighbor].append(neighbor)  
 
     return "no", nodes_counter, route_list
 

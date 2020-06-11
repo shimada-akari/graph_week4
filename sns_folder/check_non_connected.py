@@ -91,7 +91,6 @@ def search_connection(from_id, links_table, people_number):
 
         if visited_list[next_id] == 0: #queueから取り出した要素が未訪問
             visited_list[next_id] += 1
-        
 
             for neighbor in links_table[next_id]:
                 queue.append(neighbor)
@@ -112,12 +111,10 @@ def search_connection(from_id, links_table, people_number):
     return not_connected
 
 
-
 def check_link(from_id, links_table, id_nicknames):
     people_number = len(id_nicknames)
 
     return search_connection(from_id, links_table, people_number)
-
 
 
 def run_test():

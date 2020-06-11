@@ -16,8 +16,6 @@ def load_nicknames_data():#nicknameを返す
     for line in all_lines: 
         line = line.replace('\n','') #改行文字削除
         id, next_id_name = line.split('\t') #idとnicknameで分ける
-        # id = int(id)
-        # nicknames.append([id, next_id_name])
         nicknames.append(next_id_name)
 
     # ファイルをクローズする
@@ -37,9 +35,8 @@ def load_links_data():
     links_table = []
 
     links_data = open(path, "r")
-
-    # 行ごとにすべて読み込んでリストデータにする
-    all_lines = links_data.readlines()
+    
+    all_lines = links_data.readlines() # 行ごとにすべて読み込んでリストデータにする
 
     table_append_index = -1
     for line in all_lines: 
@@ -85,8 +82,6 @@ def search_connection(from_id, to_id, links_table, people_number):
     while (len(stack) != 0):
         next_id = stack.pop(-1)
 
-        # print(stack, next_id, links_table[next_id]) #for check
-
         if next_id == to_id:
             return "yes"
          
@@ -96,18 +91,11 @@ def search_connection(from_id, to_id, links_table, people_number):
             for neighbor in links_table[next_id]:
                 stack.append(neighbor)
 
-        # visited_list[id] = 1
-        
-        # count += 1
-        # if count >= 10:
-        #     break
-
     return "no"
 
 
 def check_link(from_id, to_id, links_table, id_nicknames):
     people_number = len(id_nicknames)
-    # print("from : " + str(from_id)  + " "+ "to : " + str(to_id), end = " ")
 
     flag = search_connection(from_id, to_id, links_table, people_number)
 
@@ -182,10 +170,6 @@ def main():
         # print(from_id, to_id)
         check_link(from_id, to_id, links_table, id_nicknames)
 
-    # print(links_table)
-    # print(links)
-    # print(nicknames[1])
-    # check_link(from_id, to_id)
 
 
 if __name__ == "__main__":
