@@ -83,27 +83,24 @@ def search_connection(from_id, links_table, people_number):
     queue.append(from_id)
     nodes_counter = [0]*people_number
     route_list = [[i] for i in range(people_number)]
-  
-    for i in range(people_number):
-        if visited_list[i] != 0: #訪問済みノード
-            continue
 
-        while(len(queue) != 0):
-            # print(queue)
-            next_id = queue.pop(0)
 
-            if visited_list[next_id] == 0: #queueから取り出した要素が未訪問
-                visited_list[next_id] += 1
-            
+    while(len(queue) != 0):
+        # print(queue)
+        next_id = queue.pop(0)
 
-                for neighbor in links_table[next_id]:
-                    queue.append(neighbor)
-                    nodes_counter[neighbor] = nodes_counter[next_id] + 1
-            
-                    route_list[neighbor] = route_list[next_id].copy() #静的確保
-                    # print("before", route_list[next_id], route_list[neighbor])
-                    route_list[neighbor].append(neighbor)
-                    # print(route_list, next_id, neighbor)
+        if visited_list[next_id] == 0: #queueから取り出した要素が未訪問
+            visited_list[next_id] += 1
+        
+
+            for neighbor in links_table[next_id]:
+                queue.append(neighbor)
+                nodes_counter[neighbor] = nodes_counter[next_id] + 1
+        
+                route_list[neighbor] = route_list[next_id].copy() #静的確保
+                # print("before", route_list[next_id], route_list[neighbor])
+                route_list[neighbor].append(neighbor)
+                # print(route_list, next_id, neighbor)
 
         
     not_connected = []
